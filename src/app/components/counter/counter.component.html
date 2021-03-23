@@ -4,6 +4,9 @@
 <button (click)="increment()"
         class="btn btn-primary">+</button>
 <div>
+  <!--() are outputs [] are inputs-->
   <button (click)="reset()"
+          [disabled]="resetDisabled$ | async"
           class="btn btn-primary">Reset</button>
 </div>
+<app-counter-count-by></app-counter-count-by>
