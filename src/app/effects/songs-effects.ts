@@ -5,11 +5,32 @@ import { HttpClient } from "@angular/common/http";
 
 import * as appActions from '../actions/app.actions';
 import * as songsActions from '../actions/song-actions';
-import { map, switchMap } from "rxjs/operators";
+import { catchError, map, switchMap } from "rxjs/operators";
 import { SongEntity } from "../reducers/songs.reducer";
+import { dispatch } from "rxjs/internal/observable/pairs";
+import { of } from "rxjs";
 
 @Injectable()
 export class SongsEffects {
+
+  // songAdded -> (a trip to api ) => (songAddedSuccessfully | songAddedFailure)
+  addSong$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(songsActions.songAdded),
+      switchMap(originalAction => this.client.post<SongEntity>(environment.baseUrl + 'songs', {
+        title: originalAction.payload.title,
+        artist: originalAction.payload.artist,
+        recommendedBy: originalAction.payload.recommendedBy
+      }).pipe(
+        map(song => songsActions.songAddedSuccessfully({ payload: song, oldID: originalAction.payload.id })),
+        catchError(err => of(songsActions.songAddedFailure({ payload: originalAction.payload, message: 'Adding The Song Failed' })))
+      )
+
+
+
+      )
+    )
+    , { dispatch: true })
 
   loadSongs$ = createEffect(() =>
     this.actions$.pipe(
