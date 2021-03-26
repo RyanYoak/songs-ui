@@ -1,12 +1,14 @@
 <div class="alert alert-info"
      *ngIf="!(songsLoaded$ | async)">
+  <h2>Please wait while we load your songs.</h2>
   <img src="https://media.giphy.com/media/3y0oCOkdKKRi0/giphy.gif">
 </div>
 
 <div *ngIf="songsLoaded$ | async">
   <div class="alert alert-info"
        *ngIf="(songs$ | async)?.length === 0">
-    <h2>You Have No Songs! Add Some!</h2>
+    <h2>You Have No Songs, Add Some!</h2>
+    <app-song-entry></app-song-entry>
   </div>
 
   <div class="card"
@@ -15,9 +17,12 @@
       <h5 class="card-title">{{song.title}}</h5>
       <h6 class="card-subtitle mb-2 text-muted">By {{song.artist || 'Unknown Artist'}}</h6>
       <p class="card-text">{{song.recommendedBy}} Recommended this</p>
-
-
-
+      <div>
+        <button (click)="removeSong(song)"
+                *ngIf="song.isSaved"
+                class="btn btn-danger">Remove Song</button>
+        <p *ngIf="!song.isSaved"><em>Please wait while we save your song.</em></p>
+      </div>
     </div>
   </div>
 </div>
