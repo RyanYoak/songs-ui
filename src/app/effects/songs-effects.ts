@@ -13,6 +13,13 @@ import { of } from "rxjs";
 @Injectable()
 export class SongsEffects {
 
+  romoveSong$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(songsActions.songRemoved),
+      switchMap(a => this.client.delete(environment.baseUrl + 'songs/' + a.payload.id))
+    ), { dispatch: false }
+  );
+
   // songAdded -> (a trip to api ) => (songAddedSuccessfully | songAddedFailure)
   addSong$ = createEffect(() =>
     this.actions$.pipe(
